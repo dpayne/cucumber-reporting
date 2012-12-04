@@ -33,28 +33,28 @@ public class FlashChartBuilder {
         buffer.append("<row>");
         buffer.append("<string>Passed</string>");
         for (TagObject tag : tagObjectList) {
-            buffer.append("<number tooltip='" + tag.getNumberOfPasses() + "'>" + tag.getNumberOfPasses() + "</number>");
+            buffer.append("<number tooltip='" + tag.getNumberOfStepsPassed() + "'>" + tag.getNumberOfStepsPassed() + "</number>");
 
         }
         buffer.append("</row>");
         buffer.append("<row>");
         buffer.append("<string>Failed</string>");
         for (TagObject tag : tagObjectList) {
-            buffer.append("<number tooltip='" + tag.getNumberOfFailures() + "'>" + tag.getNumberOfFailures() + "</number>");
+            buffer.append("<number tooltip='" + tag.getNumberOfStepsFailed() + "'>" + tag.getNumberOfStepsFailed() + "</number>");
 
         }
         buffer.append("</row>");
         buffer.append("<row>");
         buffer.append("<string>Skipped</string>");
         for (TagObject tag : tagObjectList) {
-            buffer.append("<number tooltip='" + tag.getNumberOfSkipped() + "'>" + tag.getNumberOfSkipped() + "</number>");
+            buffer.append("<number tooltip='" + tag.getNumberOfStepsSkipped() + "'>" + tag.getNumberOfStepsSkipped() + "</number>");
 
         }
         buffer.append("</row>");
         buffer.append("<row>");
         buffer.append("<string>Pending</string>");
         for (TagObject tag : tagObjectList) {
-            buffer.append("<number tooltip='" + tag.getNumberOfPending() + "'>" + tag.getNumberOfPending() + "</number>");
+            buffer.append("<number tooltip='" + tag.getNumberOfStepsPending() + "'>" + tag.getNumberOfStepsPending() + "</number>");
 
         }
         buffer.append("</row>");

@@ -36,7 +36,7 @@ public class Step {
 
     private Util.Status getInternalStatus() {
         if (result == null) {
-            System.out.println("[WARNING] Line " + line + " : " + "Step is missing Result: " + keyword + " : " + name);
+//            System.out.println("[WARNING] Line " + line + " : " + "Step is missing Result: " + keyword + " : " + name);
             return Util.Status.MISSING;
         } else {
             return Util.resultMap.get(result.getStatus());
@@ -114,7 +114,7 @@ public class Step {
 
     private String formatError(String errorMessage) {
         String result = errorMessage;
-        if (errorMessage != null || !errorMessage.isEmpty()) {
+        if (errorMessage != null && !errorMessage.isEmpty()) {
             result = errorMessage.replaceAll("\\\\n", "<br/>");
         }
         return result;
@@ -138,5 +138,9 @@ public class Step {
 
     public String getMimeEncodedEmbeddedImage() {
         return "data:image/png;base64,"+((StringMap)embeddings[0]).get("data");
+    }
+
+    public Result getResult() {
+        return result;
     }
 }

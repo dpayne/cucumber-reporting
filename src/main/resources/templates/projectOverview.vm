@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Cucumber-JVM Html Reports - Project Overview</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawCharts);
+        function drawCharts() {
+            var scenariosData = google.visualization.arrayToDataTable([
+                ['Scenarios', 'Status of Scenarios'],
+                ['Passed',     ${total_scenario_passes}],
+                ['Failed',      ${total_scenario_fails}]
+            ]);
+
+            var scenariosOptions = {
+                title:'Scenarios Overview',
+                is3D:true,
+                colors:['green', '#B22222', 'blue'],
+                chartArea:{height:225, width:500}
+            };
+
+            var scenariosChart = new google.visualization.PieChart(document.getElementById('scenarios_results_chart'))
+                    .draw(scenariosData, scenariosOptions);
+
+            var stepsData = google.visualization.arrayToDataTable([
+                ['Steps', 'Status of Steps'],
+                ['Passed',     ${total_step_passes}],
+                ['Failed',     ${total_step_fails}],
+                ['Skipped',    ${total_step_skipped}],
+                ['Pending', ${total_step_pending}]
+            ]);
+
+            var stepsOptions = {
+                title:'Steps Overview',
+                is3D:true,
+                colors:['green', '#B22222', 'blue', 'orange'],
+                chartArea:{height:225, width:500}
+            };
+
+            var stepsChart = new google.visualization.PieChart(document.getElementById('steps_results_chart'))
+                    .draw(stepsData, stepsOptions);
+        }
+
+    </script>
+    <link rel="icon" href="favicon.ico"/>
+    <script src="js/piecon.min.js"></script>
+    <script>
+        (function () {
+            var percent = ($total_scenario_passes / $total_scenarios)*100;
+            percent = percent.toFixed(1);
+
+            Piecon.setOptions({
+                color:'green', // Pie chart color
+                background:'red', // Empty pie chart color
+                shadow:'#fff', // Outer ring color
+                fallback:'force'});
+            Piecon.setProgress(percent);
+        })();
+    </script>
+</head>
+<body id="top">
+<div id="fullwidth_header">
+    <div class="container_12">
+        <h1 class="grid_4 logo"><a href="project-overview.html" class='ie6fix'>Cucumber</a></h1>
+
+        <div class="grid_6" id="nav">
+            <ul>
+                #if ($build_number)
+                    <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
+                #end
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="fullwidth_gradient" class="pageHeader">
+    <div class="pageHeaderText">
+        <h2>Project Overview#if ($build_number) for Build: $build_number#end</h2>
+    </div>
+</div>
+
+<div id="pieChartContainer" class="pieChart">
+    <div id="scenarios_results_chart" style="height: 275px; float: left;"></div>
+    <div id="steps_results_chart" style="height: 275px; float: right;"></div>
+    <noscript>
+        <P>This content requires JavaScript.</P>
+    </noscript>
+</div>
+<div class="statsTable">
+    <h2>Project Statistics</h2>
+    <table class="bordered">
+        <tr>
+            <th>Project</th>
+            <th>Features</th>
+            <th>Scenarios</th>
+            <th>Steps</th>
+            <th>Passed Scenarios</th>
+            <th>Failed Scenarios</th>
+            <th>Passed Steps</th>
+            <th>Failed Steps</th>
+            <th>Skipped Steps</th>
+            <th>Pending Steps</th>
+            <th>Duration</th>
+            <th>Status</th>
+        </tr>
+
+        #foreach($project in $projects)
+
+            #if($project.getStatus().toString() == "PASSED")
+                #set($bgcolour = "#C5D88A")
+            #else
+                #set($bgcolour = "#D88A8A")
+            #end
+
+            <tr onclick="window.location = '$project.getProjectFeatureUri()'">
+                <td style="text-align:left;"><a href="$project.getProjectFeatureUri()">$project.getName()</a>
+                </td>
+                <td>$project.getNumberOfFeatures()</td>
+                <td>$project.getNumberOfScenarios()</td>
+                <td>$project.getNumberOfSteps()</td>
+                <td>$project.getNumberOfScenariosPassed()</td>
+                <td>$project.getNumberOfScenariosFailed()</td>
+                <td>$project.getNumberOfStepsPassed()</td>
+                <td>$project.getNumberOfStepsFailed()</td>
+                <td>$project.getNumberOfStepsSkipped()</td>
+                <td>$project.getNumberOfStepsPending()</td>
+                <td>$project.getFormattedDuration()</td>
+                #if($project.getStatus().toString() == "PASSED")
+                    <td style="background-color: $bgcolour;">Passed</td>
+                #elseif($project.getStatus().toString() == "FAILED_BUILD")
+                    <td style="background-color: $bgcolour;">Build Failure</td>
+                #else
+                    <td style="background-color: $bgcolour;">($project.getNumberOfScenariosFailed()/$project.getNumberOfScenarios())<br/>Failed</td>
+                #end
+            </tr>
+        #end
+
+        <tr>
+            <td style="background-color:lightgray;font-weight:bold;">$total_projects</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_features</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_step_passes</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_step_fails</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_step_skipped</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_step_pending</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
+            <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+        </tr>
+    </table>
+    <p>
+
+    <div style="float: left;"><a href="logFiles.html">Logs</a></div>
+    <div style="float: right;">Created at $time_stamp</div>
+    </p>
+</div>
+
+<div class="clear"></div>
+<div id="holder"></div>
+</body>
+</html>

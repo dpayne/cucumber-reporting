@@ -6,30 +6,24 @@ import java.util.*;
 
 public class JsChartUtil {
 
-    class ValueComparator implements Comparator {
+    class ValueComparator implements Comparator<String> {
 
-        Map base;
+        Map<String, Integer> base;
 
-        public ValueComparator(Map base) {
+        public ValueComparator(Map<String, Integer> base) {
             this.base = base;
         }
 
-        public int compare(Object a, Object b) {
-
-            if ((Integer) base.get(a) < (Integer) base.get(b)) {
-                return 1;
-            } else if ((Integer) base.get(a) == (Integer) base.get(b)) {
-                return 0;
-            } else {
-                return -1;
-            }
+        @Override
+        public int compare(String a, String b) {
+            return (base.get(a).compareTo(base.get(b)));
         }
     }
 
     public List<String> orderStepsByValue(int numberTotalPassed, int numberTotalFailed, int numberTotalSkipped, int numberTotalPending) {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
         ValueComparator bvc = new ValueComparator(map);
-        TreeMap<String, Integer> sorted_map = new TreeMap(bvc);
+        TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>(bvc);
 
         map.put("#88dd11", numberTotalPassed);
         map.put("#cc1134", numberTotalFailed);
@@ -47,7 +41,7 @@ public class JsChartUtil {
     public List<String> orderScenariosByValue(int numberTotalPassed, int numberTotalFailed) {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
         ValueComparator bvc = new ValueComparator(map);
-        TreeMap<String, Integer> sorted_map = new TreeMap(bvc);
+        TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>(bvc);
 
         map.put("#88dd11", numberTotalPassed);
         map.put("#cc1134", numberTotalFailed);
@@ -61,15 +55,10 @@ public class JsChartUtil {
     }
 
     public static String generateTagChartData(List<TagObject> tagObjectList) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (TagObject tag : tagObjectList) {
-           buffer.append("[[" + tag.getNumberOfPasses() + "," + tag.getNumberOfFailures() + "," + tag.getNumberOfSkipped() + "," + tag.getNumberOfPending() + "],{label:'" + tag.getTagName() + "'}],");
+           buffer.append("[[").append(tag.getNumberOfStepsPassed()).append(",").append(tag.getNumberOfStepsFailed()).append(",").append(tag.getNumberOfStepsSkipped()).append(",").append(tag.getNumberOfStepsPending()).append("],{label:'").append(tag.getTagName()).append("'}],");
         }
         return buffer.toString();
-
-
     }
-
-
-
 }

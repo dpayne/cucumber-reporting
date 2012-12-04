@@ -145,5 +145,10 @@
             <artifactId>maven-gpg-plugin</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
+            <version>1.0.14</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Cucumber-JVM Html Reports - Feature: $feature.getRawName() </title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<body id="top">
+<div id="fullwidth_header">
+    <h1 class="logo"><a href="project-overview.html" class='ie6fix'>Cucumber</a></h1>
+
+    <div id="nav">
+        <ul>
+            #if ($fromJenkins)
+                #if ($build_number)
+                    <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
+                #end
+            #end
+            <li><a href="project-overview.html">Project Overview</a></li>
+        </ul>
+    </div>
+</div>
+<div id="fullwidth_gradient" class="pageHeader">
+    <div class="pageHeaderText">
+        <h2>Log Files:</h2>
+    </div>
+</div>
+<div class="logFileSection">
+    #foreach($logFile in $logFiles)
+        <p><h4><a href="$logFile.getLocalLogPath()">$logFile.getName()</a></h4></p>
+    #end
+</div>
+
+</body>

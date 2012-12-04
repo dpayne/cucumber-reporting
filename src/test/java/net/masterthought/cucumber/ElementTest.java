@@ -28,10 +28,8 @@ public class ElementTest {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/project1.json"));
         reportParser = new ReportParser(jsonReports);
-        Feature passingFeature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(0);
-        Feature failingFeature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(1);
-        passingFeature.processSteps();
-        failingFeature.processSteps();
+        Feature passingFeature = reportParser.getProjects().get(0).getFeatures()[0];
+        Feature failingFeature = reportParser.getProjects().get(0).getFeatures()[1];
         passingElement = passingFeature.getElements()[0];
         failingElement = failingFeature.getElements()[0];
         taggedElement = passingFeature.getElements()[1];

@@ -26,15 +26,13 @@ public class FeatureTest {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/project1.json"));
         reportParser = new ReportParser(jsonReports);
-        passingFeature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(0);
-        failingFeature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(1);
-        passingFeature.processSteps();
-        failingFeature.processSteps();
+        passingFeature = reportParser.getProjects().get(0).getFeatures()[0];
+        failingFeature = reportParser.getProjects().get(0).getFeatures()[1];
     }
 
     @Test
     public void shouldReturnManagedFileName() {
-        assertThat(passingFeature.getFileName(), is("masterthought-example-ATM.feature.html"));
+        assertThat(passingFeature.getFileName(), is("project1-masterthought-example-ATM.feature.html"));
     }
 
     @Test
@@ -77,46 +75,46 @@ public class FeatureTest {
 
     @Test
     public void shouldReturnRawStatus() {
-        assertThat(passingFeature.getRawStatus(), is("passed"));
+        assertThat(passingFeature.getRawStatus(), is("PASSED"));
     }
 
     @Test
     public void shouldGetNumberOfSteps() {
-        assertThat(passingFeature.getNumberOfSteps(), is(40));
+        assertThat(passingFeature.getAllSteps().size(), is(40));
     }
 
     @Test
     public void shouldGetNumberOfPassingSteps() {
-        assertThat(passingFeature.getNumberOfPasses(), is(40));
-        assertThat(failingFeature.getNumberOfPasses(), is(5));
+        assertThat(passingFeature.getPassedSteps().size(), is(40));
+        assertThat(failingFeature.getPassedSteps().size(), is(5));
 
     }
 
     @Test
     public void shouldGetNumberOfFailingSteps() {
-        assertThat(passingFeature.getNumberOfFailures(), is(0));
-        assertThat(failingFeature.getNumberOfFailures(), is(1));
+        assertThat(passingFeature.getFailedSteps().size(), is(0));
+        assertThat(failingFeature.getFailedSteps().size(), is(1));
     }
 
     @Test
     public void shouldGetNumberOfSkippedSteps() {
-        assertThat(passingFeature.getNumberOfSkipped(), is(0));
-        assertThat(failingFeature.getNumberOfSkipped(), is(3));
+        assertThat(passingFeature.getSkippedSteps().size(), is(0));
+        assertThat(failingFeature.getSkippedSteps().size(), is(3));
     }
 
     @Test
     public void shouldGetNumberOfPendingSteps() {
-        assertThat(passingFeature.getNumberOfPending(), is(0));
+        assertThat(passingFeature.getPendingSteps().size(), is(0));
     }
 
     @Test
     public void shouldGetNumberOfMissingSteps() {
-        assertThat(passingFeature.getNumberOfMissing(), is(0));
+        assertThat(passingFeature.getPendingSteps().size(), is(0));
     }
 
     @Test
     public void shouldGetDurationOfSteps() {
-        assertThat(passingFeature.getDurationOfSteps(), StringContains.containsString("ms"));
+        assertThat(passingFeature.getDurationOfSteps(), is(112739000L));
     }
 
 //    @Test
@@ -130,8 +128,7 @@ public class FeatureTest {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/noscenario.json"));
         ReportParser reportParser = new ReportParser(jsonReports);
-        Feature feature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(0);
-        feature.processSteps();
+        Feature feature = reportParser.getProjects().get(0).getFeatures()[0];
     }
 
 

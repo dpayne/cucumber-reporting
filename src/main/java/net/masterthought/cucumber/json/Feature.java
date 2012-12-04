@@ -1,25 +1,31 @@
 package net.masterthought.cucumber.json;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import net.masterthought.cucumber.ConfigurationOptions;
+import net.masterthought.cucumber.Project;
 import net.masterthought.cucumber.util.Util;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Feature {
 
+    Project parentProject;
     private String name;
     private String uri;
     private String description;
     private String keyword;
     private Element[] elements;
     private Tag[] tags;
-    private StepResults stepResults;
-
+    private List<Step> allSteps = new ArrayList<Step>();
+    private List<Element> allScenarios = new ArrayList<Element>();
+    private List<Step> passedSteps = new ArrayList<Step>();
+    private List<Step> failedSteps = new ArrayList<Step>();
+    private List<Step> pendingSteps = new ArrayList<Step>();
+    private List<Step> skippedSteps = new ArrayList<Step>();
+    private List<Step> missingSteps = new ArrayList<Step>();
+    private List<Element> passedScenarios = new ArrayList<Element>();
+    private List<Element> failedScenarios = new ArrayList<Element>();
+    private long durationOfSteps = 0L;
 
     public Feature() {
 
@@ -31,7 +37,8 @@ public class Feature {
 
     public String getFileName() {
         List<String> matches = new ArrayList<String>();
-        for (String line : Splitter.onPattern("/|\\\\").split(uri)) {
+        String [] lines = uri.split("/|\\\\");
+        for (String line : lines) {
             String modified = line.replaceAll("\\)|\\(", "");
             modified = StringUtils.deleteWhitespace(modified).trim();
             matches.add(modified);
@@ -40,8 +47,8 @@ public class Feature {
         List<String> sublist = matches.subList(1, matches.size());
 
         matches = (sublist.size() == 0) ? matches : sublist;
-        String fileName = Joiner.on("-").join(matches) + ".html";
-        return fileName;
+        String fileName = StringUtils.join(matches.iterator(), "-");
+        return parentProject.getName() + "-" + fileName + ".html";
     }
 
     public boolean hasTags() {
@@ -87,7 +94,11 @@ public class Feature {
     }
 
     public String getRawStatus() {
-        return getStatus().toString().toLowerCase();
+        return getStatus().toString().toUpperCase();
+    }
+
+    public Tag[] getRawTags() {
+        return tags;
     }
 
     public String getDescription() {
@@ -105,120 +116,92 @@ public class Feature {
     public int getNumberOfScenarios() {
         int result = 0;
         if (Util.itemExists(elements)) {
-          result = elements.length;
+            result = elements.length;
         }
         return result;
     }
 
-    public int getNumberOfSteps() {
-        return stepResults.getNumberOfSteps();
+    public List<Step> getAllSteps() {
+        return allSteps;
     }
 
-    public int getNumberOfPasses() {
-        return stepResults.getNumberOfPasses();
+    public void setAllSteps(List<Step> allSteps) {
+        this.allSteps = allSteps;
     }
 
-    public int getNumberOfFailures() {
-        return stepResults.getNumberOfFailures();
+    public List<Step> getPassedSteps() {
+        return passedSteps;
     }
 
-    public int getNumberOfPending() {
-        return stepResults.getNumberOfPending();
+    public void setPassedSteps(List<Step> passedSteps) {
+        this.passedSteps = passedSteps;
     }
 
-    public int getNumberOfSkipped() {
-        return stepResults.getNumberOfSkipped();
+    public List<Step> getFailedSteps() {
+        return failedSteps;
     }
 
-    public int getNumberOfMissing() {
-        return stepResults.getNumberOfMissing();
+    public void setFailedSteps(List<Step> failedSteps) {
+        this.failedSteps = failedSteps;
     }
 
-    public String getDurationOfSteps() {
-        return stepResults.getTotalDurationAsString();
+    public List<Step> getPendingSteps() {
+        return pendingSteps;
     }
 
-    public void processSteps() {
-        List<Step> allSteps = new ArrayList<Step>();
-        List<Step> passedSteps = new ArrayList<Step>();
-        List<Step> failedSteps = new ArrayList<Step>();
-        List<Step> skippedSteps = new ArrayList<Step>();
-        List<Step> pendingSteps = new ArrayList<Step>();
-        List<Step> missingSteps = new ArrayList<Step>();
-        Long totalDuration = 0l;
-        if (Util.itemExists(elements)) {
-            for (Element element : elements) {
-                if (Util.hasSteps(element)) {
-                    Step[] steps = element.getSteps();
-                    for (Step step : steps) {
-                        allSteps.add(step);
-                        Util.Status stepStatus = step.getStatus();
-                        passedSteps = Util.setStepStatus(passedSteps, step, stepStatus, Util.Status.PASSED);
-                        failedSteps = Util.setStepStatus(failedSteps, step, stepStatus, Util.Status.FAILED);
-                        skippedSteps = Util.setStepStatus(skippedSteps, step, stepStatus, Util.Status.SKIPPED);
-                        pendingSteps = Util.setStepStatus(pendingSteps, step, stepStatus, Util.Status.UNDEFINED);
-                        missingSteps = Util.setStepStatus(missingSteps, step, stepStatus, Util.Status.MISSING);
-                        totalDuration = totalDuration + step.getDuration();
-                    }
-                }
-            }
-        }
-        stepResults = new StepResults(allSteps, passedSteps, failedSteps, skippedSteps, pendingSteps, missingSteps, totalDuration);
+    public void setPendingSteps(List<Step> pendingSteps) {
+        this.pendingSteps = pendingSteps;
     }
 
-    class StepResults {
-
-        List<Step> allSteps;
-        List<Step> passedSteps;
-        List<Step> failedSteps;
-        List<Step> skippedSteps;
-        List<Step> pendingSteps;
-        List<Step> missingSteps;
-        Long totalDuration;
-
-        public StepResults(List<Step> allSteps, List<Step> passedSteps, List<Step> failedSteps, List<Step> skippedSteps, List<Step> pendingSteps, List<Step> missingSteps, Long totalDuration) {
-            this.allSteps = allSteps;
-            this.passedSteps = passedSteps;
-            this.failedSteps = failedSteps;
-            this.skippedSteps = skippedSteps;
-            this.pendingSteps = pendingSteps;
-            this.missingSteps = missingSteps;
-            this.totalDuration = totalDuration;
-        }
-
-        public int getNumberOfSteps() {
-            return allSteps.size();
-        }
-
-        public int getNumberOfPasses() {
-            return passedSteps.size();
-        }
-
-        public int getNumberOfFailures() {
-            return failedSteps.size();
-        }
-
-        public int getNumberOfPending() {
-            return pendingSteps.size();
-        }
-
-        public int getNumberOfSkipped() {
-            return skippedSteps.size();
-        }
-
-        public int getNumberOfMissing() {
-            return missingSteps.size();
-        }
-
-        public long getTotalDuration() {
-            return totalDuration;
-        }
-
-        public String getTotalDurationAsString() {
-            return Util.formatDuration(totalDuration);
-        }
-
+    public List<Step> getSkippedSteps() {
+        return skippedSteps;
     }
 
+    public void setSkippedSteps(List<Step> skippedSteps) {
+        this.skippedSteps = skippedSteps;
+    }
 
+    public List<Element> getPassedScenarios() {
+        return passedScenarios;
+    }
+
+    public void setPassedScenarios(List<Element> passedScenarios) {
+        this.passedScenarios = passedScenarios;
+    }
+
+    public List<Element> getFailedScenarios() {
+        return failedScenarios;
+    }
+
+    public void setFailedScenarios(List<Element> failedScenarios) {
+        this.failedScenarios = failedScenarios;
+    }
+
+    public List<Element> getAllScenarios() {
+        return allScenarios;
+    }
+
+    public long getDurationOfSteps() {
+        return durationOfSteps;
+    }
+
+    public void setDurationOfSteps(long durationOfSteps) {
+        this.durationOfSteps = durationOfSteps;
+    }
+
+    public String getFormattedDurationOfSteps() {
+        return Util.formatDuration(durationOfSteps);
+    }
+
+    public List<Step> getMissingSteps() {
+        return missingSteps;
+    }
+
+    public Project getParentProject() {
+        return parentProject;
+    }
+
+    public void setParentProject(Project parentProject) {
+        this.parentProject = parentProject;
+    }
 }

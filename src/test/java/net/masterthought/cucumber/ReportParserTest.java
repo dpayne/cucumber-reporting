@@ -17,48 +17,46 @@ public class ReportParserTest {
     @Test
     public void shouldReturnAListOfFeaturesFromAJsonReport() throws IOException {
         ReportParser reportParser = new ReportParser(validJsonReports());
-        assertThat(reportParser.getFeatures().entrySet().size(), is(2));
-        assertThat(reportParser.getFeatures().entrySet().iterator().next().getValue().get(0), is(Feature.class));
-        assertThat(reportParser.getFeatures().entrySet().iterator().next().getValue().get(1), is(Feature.class));
+        assertThat(reportParser.getProjects().get(0).getFeatures().length, is(2));
+        assertThat(reportParser.getProjects().get(0).getFeatures()[0], is(Feature.class));
+        assertThat(reportParser.getProjects().get(0).getFeatures()[1], is(Feature.class));
     }
 
     @Test
     public void shouldContainFourFeatures() throws IOException {
         ReportParser reportParser = new ReportParser(validJsonReports());
-        List<Feature> features = new ArrayList<Feature>();
-        for (Map.Entry<String, List<Feature>> pairs : reportParser.getFeatures().entrySet()){
-            List<Feature> featureList = pairs.getValue();
-            features.addAll(featureList);
-        }
-        assertThat(features.size(), is(4));
+        assertThat(reportParser.getProjects().get(0).getFeatures().length, is(2));
+        assertThat(reportParser.getProjects().get(1).getFeatures().length, is(2));
     }
 
     @Test
     public void shouldIgnoreEmptyJsonFiles() throws IOException {
         ReportParser reportParser = new ReportParser(withEmptyJsonReport());
-        assertThat(reportParser.getFeatures().entrySet().size(), is(1));
+        assertThat(reportParser.getProjects().get(0).getFeatures().length, is(2));
+        assertThat(reportParser.getProjects().size(), is(1));
     }
 
     @Test
     public void shouldIgnoreJsonFilesThatAreNotCucumberReports() throws IOException {
         ReportParser reportParser = new ReportParser(withNonCucumberJson());
-        assertThat(reportParser.getFeatures().entrySet().size(), is(1));
+        assertThat(reportParser.getProjects().get(0).getFeatures().length, is(2));
+        assertThat(reportParser.getProjects().size(), is(1));
     }
 
     @Test
     public void shouldProcessCucumberReportsWithNoSteps() throws IOException {
         ReportParser reportParser = new ReportParser(withNoStepsInJsonReport());
-        assertThat(reportParser.getFeatures().entrySet().size(), is(2));
+        assertThat(reportParser.getProjects().get(0).getFeatures().length, is(2));
     }
 
     @Test
     public void shouldProcessCucumberReportsWithNoScenarios() throws IOException {
         ReportParser reportParser = new ReportParser(withNoScenariosInJsonReport());
-        assertThat(reportParser.getFeatures().entrySet().size(), is(2));
+        assertThat(reportParser.getProjects().get(0).getFeatures().length, is(2));
     }
 
 
-    
+
     private List<String> validJsonReports() {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/project1.json"));

@@ -29,10 +29,8 @@ public class StepTest {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/project1.json"));
         ReportParser reportParser = new ReportParser(jsonReports);
-        Feature passingFeature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(0);
-        Feature failingFeature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(1);
-        passingFeature.processSteps();
-        failingFeature.processSteps();
+        Feature passingFeature = reportParser.getProjects().get(0).getFeatures()[0];
+        Feature failingFeature = reportParser.getProjects().get(0).getFeatures()[1];
         passingStep = passingFeature.getElements()[0].getSteps()[0];
         failingStep = failingFeature.getElements()[0].getSteps()[5];
         skippedStep = failingFeature.getElements()[0].getSteps()[6];
@@ -43,9 +41,8 @@ public class StepTest {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/cells.json"));
         ReportParser reportParser = new ReportParser(jsonReports);
-        Feature feature = reportParser.getFeatures().entrySet().iterator().next().getValue().get(0);
+        Feature feature = reportParser.getProjects().get(0).getFeatures()[0];
         Step step = feature.getElements()[0].getSteps()[0];
-        feature.processSteps();
         assertThat(step.getRows()[0], is(Row.class));
     }
 
@@ -121,8 +118,7 @@ public class StepTest {
     private Step failingStepWithEmbeddedScreenshot() throws IOException {
         List<String> jsonReports = new ArrayList<String>();
         jsonReports.add(getAbsolutePathFromResource("net/masterthought/cucumber/failed_with_screenshot.json"));
-        Feature failingFeatureWithEmbeddedScreenshot = new ReportParser(jsonReports).getFeatures().entrySet().iterator().next().getValue().get(0);
-        failingFeatureWithEmbeddedScreenshot.processSteps();
+        Feature failingFeatureWithEmbeddedScreenshot = new ReportParser(jsonReports).getProjects().get(0).getFeatures()[0];
         return failingFeatureWithEmbeddedScreenshot.getElements()[0].getSteps()[0];
     }
 }
